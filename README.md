@@ -1,21 +1,26 @@
-- Make sure your documentation includes these sections:
-  - Purpose
-  - Issues
-  - Steps
-  - System Diagram
-  - Optimization (How would make this deployment more efficient, if you utilize ChatGPT make sure to explain what your prompt was.)
-
 # Deploying Jenkins and a Flask app on an EC2 in a VPC
 
-**This is the summary**
+***
+This is a guide to manually deploy Jenkins along with a Flask application on an EC2 instance housed within an AWS VPC. The goal of these steps is to create an environment on AWS with a Continuous Integration (CI) and Continuous Deployment (CD) processes.
+
+1. VPC Creation: Craft an isolated Amazon VPC.
+2. EC2 Configuration: Set up an EC2 instance.
+3. GitHub Integration: Integrate GitHub tokens for Jenkins and establish webhooks.
+4. Jenkins Deployment: Install Jenkins and address its core dependencies.
+5. Web Server Setup: Configure NGINX as the web server for the Flask application.
+6. Monitoring with CloudWatch: Implement monitoring using AWS Cloudwatch.
+7. Jenkins Pipeline Activation: Modify the Jenkins file to initiate the CI/CD pipeline.
+
+There are also suggestions for further improvements, leaning towards automation***
+
+![vpc-topology](vpc-topology.png)
 
 ## Creating an AWS VPC
-Why are we doing this?
 
 1. Navigate to the VPC service in AWS
 2. Click on create VPC
 3. We can stick with the standard settings
-  - Consider adding a tag
+- Consider adding a tag
 4. We are not using S3 in this infrastructure so we can select 'None' in the VPC endpoints setting
 5. Click 'Create VPC' ☁️
 
@@ -38,8 +43,7 @@ This will host the Jenkins server and the Flask application
      * Give your security group a name, I called mine 'Deployment4VpcSG'
      * Add a port for SSH with a port range of 22
      * Add TCP ports for range 8000, 8080, and 80
-  8. Launch the instance
-
+8. Launch the instance
 
 ### Github tokens
 
@@ -96,6 +100,7 @@ sudo apt-get install python3.10-venv
 ```
 
 - Install Pip, the package manager used by the python virtual environment
+
 ```bash
 sudo apt-get install python3-pip
 ```
@@ -125,9 +130,8 @@ Access the Jenkins dashboard. We'll begin to build the pipeline. We are using a 
 - Navigate to {public.ip}:8080 on your browser to configure the dashboard. You will be prompted for the admin password
 - You will be prompted to install the recommended plugin or choose your own. Install the quick start jenkins plugins
 - Install the'Pipeline Keep Running Step' plugin:
-  -  From your Jenkins dashboard navigate to Manage Jenkins > Manage Plugins and select the Available tab. Locate this plugin by searching for pipeline-keep-running-step.
 
-
+  - From your Jenkins dashboard navigate to Manage Jenkins > Manage Plugins and select the Available tab. Locate this plugin by searching for pipeline-keep-running-step.
 - Navigate to 'New Item'
 - Select Multibranch pipeline
 - Name your pipeline
@@ -152,7 +156,7 @@ Install NGINX
 sudo apt install nginx
 ```
 
-Edit the configuration file at ```/etc/nginx/sites-enabled/default```
+Edit the configuration file at ``/etc/nginx/sites-enabled/default``
 
 ```
   ###First change the port from 80 to 5000, see below:
@@ -177,19 +181,20 @@ We'll be using the AWS Cloudwatch to create an alarm that monitors Cpu, and memo
 
 Create an IAM service role. This role will give the Cloudwatch agent, which is installed on the EC2 server to gather and report metrics to Cloudwatch
 
-  - Nagivate to the IAM service
-  - Click on Roles
-  - Click 'Create a role'
-  - Select 'AWS service' and choose EC2
-  - Search for 'CloudWatchAgentAdminPolicy', select, and click 'next'
-  - Name the role something appropriate like 'CloudWatchAgentServerRole'
-  - Click 'Create role'
+- Nagivate to the IAM service
+- Click on Roles
+- Click 'Create a role'
+- Select 'AWS service' and choose EC2
+- Search for 'CloudWatchAgentAdminPolicy', select, and click 'next'
+- Name the role something appropriate like 'CloudWatchAgentServerRole'
+- Click 'Create role'
 
 Attach security group to the EC2 instance
-  - Navigate to your instance in the EC2 service
-  - Click on 'Actions'
-  - In the dropdown, select 'Security' and then 'Modify IAM role'
-  - Select the IAM role we created and save
+
+- Navigate to your instance in the EC2 service
+- Click on 'Actions'
+- In the dropdown, select 'Security' and then 'Modify IAM role'
+- Select the IAM role we created and save
 
 Download, install and configure the Cloudwatch Agent on the EC2 that will run Jenkins and the Flask Application
 
@@ -212,26 +217,27 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-config-wizard
 ```
 
 Selections
-  - 1. linux
-  - 1. EC2
-  - 1. root
-  - 2. no 
-  - 2. no
-  - 1. yes
-  - 1. yes
-  - 1. yes
-  - 1. yes
-  - 3. 30s
-  - 2. standard
-  - 1. yes
-  - 2. no
-  - 1. yes
-  - /var/log/syslog
-  - default choice [syslog]
-  - default choice [{instance.id}]
-  - 2. 1
-  - 2. no
-  - 2. no
+
+- 1. linux
+- 1. EC2
+- 1. root
+- 2. no
+- 2. no
+- 1. yes
+- 1. yes
+- 1. yes
+- 1. yes
+- 3. 30s
+- 2. standard
+- 1. yes
+- 2. no
+- 1. yes
+- /var/log/syslog
+- default choice [syslog]
+- default choice [{instance.id}]
+- 2. 1
+- 2. no
+- 2. no
 
 Start the agent
 
@@ -254,28 +260,33 @@ Set up an alarm to inform you when memory usage is over 25%. You'll need to do t
 - Include the emails that will receive an email if alarm is triggered
 - click 'next'
 - Name your alarm. I named mine the same as the topic
-- click 'create alarm' 
+- click 'create alarm'
 - You'll need to navigate to your email and confirm the email from the SNS topic. It's likely in spam
-
 
 ## Jenkins File
 
-- Create a branch ```git checkout -b luis/jenkins-file```
-- Change the Jenkins file to what's included here: ![Repo-Jenkins-File](./Jenkinsfile)
+- Create a branch ``git checkout -b luis/jenkins-file``
+- Change the Jenkins file to what's included here: [Repo-Jenkins-File](./Jenkinsfile)
 - Save your changes.
   ```bash
   git add Jenkinsfile
   git commit -m "Jenkins changes"
   ```
 - Merge your changes into main and push to the remote repo
-  ```bash 
+  ```bash
   git checkout main
   git merge luis/jenkins-file
   git push
   ```
 
 **This should trigger a build and consequentially an alarm**
-  - We configured our alarm to trigger at 25% of 4GB of RAM usage
-  - The build process, ngxin, and application take about ~38% of 4GM of RAM
-  - This would crash a T2.micro which only has 1GB of RAM
-  
+
+- We configured our alarm to trigger at 25% of 4GB of RAM usage
+- The build process, nginx, and application take about ~38% of 4GM of RAM
+- This would crash a T2.micro which only has 1GB of RAM
+
+## **Improvements**
+
+- Write a script to install Jenkins
+- Write a script to configure the NGINX server
+- Creating a CDN with Cloudfront
