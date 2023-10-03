@@ -1,8 +1,9 @@
 # Deploying Jenkins and a Flask app on an EC2 in a VPC
 
 ***
-This is a guide to manually deploy Jenkins along with a Flask application on an EC2 instance housed within an AWS VPC. The goal of these steps is to create an environment on AWS with a Continuous Integration (CI) and Continuous Deployment (CD) processes.
+This is a guide to manually deploy Jenkins along with a URL-shornter application (Flask) on an EC2 instance housed within an AWS VPC. The goal of these steps is to create an environment on AWS with a Continuous Integration (CI) and Continuous Deployment (CD) processes.
 
+These are the steps:
 1. VPC Creation: Craft an isolated Amazon VPC.
 2. EC2 Configuration: Set up an EC2 instance.
 3. GitHub Integration: Integrate GitHub tokens for Jenkins and establish webhooks.
