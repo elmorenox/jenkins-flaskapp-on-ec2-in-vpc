@@ -254,7 +254,7 @@ Start the agent
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/config.json
 ```
 
-Set up an alarm to inform you when memory usage is over 25%. You'll need to do this twice
+Set up an alarm to inform you when memory usage is over 25%
 
 - Navigate to the Cloudwatch service and click 'create alarm'
 - Select 'create metric'
@@ -305,5 +305,5 @@ source test3/bin/activate
 
 - Write a script to install Jenkins
 - Write a script to configure the NGINX server
-- Creating a CDN with Cloudfront
+- Create a CDN with Cloudfront
   
