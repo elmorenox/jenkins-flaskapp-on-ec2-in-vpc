@@ -176,6 +176,14 @@ Edit the configuration file at ``/etc/nginx/sites-enabled/default``
   }
 ```
 
+Start NGINX
+```bash
+sudo sytemcl start nginx
+```
+
+You should be able to reach the url-shortner at {public.ip}:8000
+![url-shortner](url-shortner.png)
+
 ## Cloudwatch
 
 We'll be using the AWS Cloudwatch to create an alarm that monitors Cpu, and memory usage that exceeds 25% respectively
@@ -286,8 +294,16 @@ Set up an alarm to inform you when memory usage is over 25%. You'll need to do t
 - The build process, nginx, and application take about ~38% of 4GM of RAM
 - This would crash a T2.micro which only has 1GB of RAM
 
+## Issues
+
+- You may need to add the following in your deploy stage
+```bash
+source test3/bin/activate
+```
+
 ## **Improvements**
 
 - Write a script to install Jenkins
 - Write a script to configure the NGINX server
 - Creating a CDN with Cloudfront
+  
