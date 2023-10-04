@@ -186,7 +186,7 @@ You should be able to reach the url-shortner at {public.ip}:8000
 
 ## Cloudwatch
 
-We'll be using the AWS Cloudwatch to create an alarm that monitors Cpu, and memory usage that exceeds 25% respectively
+We'll be using the AWS Cloudwatch to create an alarm that monitors memory usage that exceeds 25% respectively
 
 Create an IAM service role. This role will give the Cloudwatch agent, which is installed on the EC2 server to gather and report metrics to Cloudwatch
 
